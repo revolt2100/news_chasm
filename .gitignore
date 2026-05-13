@@ -2,3 +2,6 @@ labeled_illustrations/
 labeled_photos/
 pics/
 *.zip
+.DS_Store
+downloaded_images/
+venv/
