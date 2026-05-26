@@ -1,0 +1,36 @@
+SKIPPED: https://holod.media/2025/06/21/video-strashnoj-kazni-stalo-zagadkoj-dlya-millenialov/ -> Text 'sentiment_score' is literally null.
+SKIPPED: https://holod.media/2025/06/21/gibel-gruppi-shataevoy/ -> Text 'sentiment_score' is literally null.
+SKIPPED: https://holod.media/2025/06/19/on-ne-pedofil-ni-v-koem-sluchae/ -> Text 'sentiment_score' is literally null.
+SKIPPED: https://holod.media/2025/06/19/ya-zhivu-na-shotlandskom-ostrove/ -> Text 'sentiment_score' is literally null.
+SKIPPED: https://holod.media/2025/05/29/biznesmen-podaril-sto-kvartir/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/05/27/smi-rasskazali/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/05/21/luchevaya-terapiya/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/05/21/rost-czen-na-metro/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/05/16/v-moskovskom-migraczionnom-czentre/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/05/14/studenty-pozhalovalis/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/05/13/tom-hardi-travmi/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/05/12/vyrastila-opuhol/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/05/09/zamgubernatora-belgorodskoj/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/05/07/paralizovannaya-koshka/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/05/06/krokodil-zamerzaet/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/05/06/deficzit-uchitelej/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/05/01/dyra-v-rossijskom-byudzhete/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/04/30/zumery-rezhe-chitayut/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/04/30/livni-i-sneg/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/04/29/molekulyarnoe-oblako/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/04/28/kater-vrezalsya/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/04/21/nazval-imya-lgbt/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/04/01/rieltoru-prishlos-izvinitsya/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/04/01/dolya-dovolnyh-zarplatoj/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/03/31/cherneyut-vody-krana/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/03/27/pitomczi-v-transporte/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/03/27/proverit-kraski/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/03/26/transporte-po-bluetooth/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/03/26/zhvachka-mikroplastik/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/03/26/rost-inflyaczii/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/03/25/putin-zayavil-o-rotaczii/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/03/25/vzyskat-s-ssha/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/03/24/aktrisa-iz-belogo-lotosa/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/03/24/restoranah-vysokoj-kuhni/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/03/21/klaviaturnomu-pocherku/ -> Images exist, but none of them have a 'sentiment_score'.
+SKIPPED: https://holod.media/2025/03/17/zarplaty-ohrannikov-putina/ -> Images exist, but none of them have a 'sentiment_score'.
