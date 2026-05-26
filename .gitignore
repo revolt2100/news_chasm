@@ -5,3 +5,5 @@ pics/
 .DS_Store
 downloaded_images/
 venv/
+labeled_all_illustrations/
+labeled_all_photos/

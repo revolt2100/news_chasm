@@ -1,65 +1,93 @@
-import os
 import json
 import torch
+import requests
+from io import BytesIO
 from PIL import Image
 from transformers import CLIPProcessor, CLIPModel
 from tqdm import tqdm
 
+# ==========================================
+# CONFIGURATION
+# ==========================================
+input_json_file = "AGAINholod_enriched3.json" # Your master file
+output_json_file = "final.json" # New file so we don't overwrite the original if it crashes
+
+# Pretend to be a web browser so the website doesn't block the image download
+HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+}
+
 def main():
-    # 1. Automatically use GPU (Nvidia), MPS (Mac), or fallback to CPU
+    # 1. Load the Dataset
+    print(f"Reading dataset: {input_json_file}...")
+    try:
+        with open(input_json_file, "r", encoding="utf-8") as f:
+            dataset = json.load(f)
+    except FileNotFoundError:
+        print(f"❌ Could not find {input_json_file}. Please check the filename.")
+        return
+
+    # 2. Build a hit-list of images that need processing
+    images_to_process = []
+    
+    for article_idx, article in enumerate(dataset):
+        for img_idx, img in enumerate(article.get("Images", [])):
+            score = img.get("sentiment_score")
+            url = img.get("url")
+            
+            # If there's a URL, but no valid score, add it to our queue
+            if url and not isinstance(score, (int, float)):
+                # We save the indices so we can inject the data directly back into the dataset!
+                images_to_process.append({
+                    "article_idx": article_idx,
+                    "img_idx": img_idx,
+                    "url": url
+                })
+                
+    print(f"🎯 Found {len(images_to_process)} images missing sentiment scores.")
+
+    if not images_to_process:
+        print("\n✅ All images in your JSON already have scores! You don't need to run this.")
+        return
+
+    # 3. Setup Hardware & Model
     if torch.cuda.is_available():
         device = "cuda"
     elif torch.backends.mps.is_available():
         device = "mps"
     else:
         device = "cpu"
-    print(f"Using device: {device.upper()}")
+    print(f"\nUsing device: {device.upper()}")
 
-    # 2. Load CLIP model and processor
     print("Loading CLIP model...")
     model_id = "openai/clip-vit-base-patch32"
     model = CLIPModel.from_pretrained(model_id).to(device)
-    processor = CLIPProcessor.from_pretrained(model_id)  # fixed: added model_id
+    processor = CLIPProcessor.from_pretrained(model_id)
 
-    # 3. Define the text prompts for Zero-Shot Classification
+    # 4. Prompts & Categories
     text_prompts = [
         "a news image with a positive, uplifting, or happy sentiment",
         "a news image with a negative, tragic, or angry sentiment",
         "a neutral, informational, or objective news image"
     ]
     categories = ["Positive", "Negative", "Neutral"]
+    
+    success_count = 0
+    fail_count = 0
 
-    # 4. Find all images in the two child directories
-    valid_extensions = {'.jpg', '.jpeg', '.png', '.webp', '.bmp'}
-    source_dirs = ["labeled_illustrations", "labeled_photos"]
-    
-    image_files = []  # tuples of (directory, filename, full_path)
-    
-    for directory in source_dirs:
-        if not os.path.isdir(directory):
-            print(f"Warning: Directory '{directory}' not found. Skipping.")
-            continue
-            
-        for f in os.listdir(directory):
-            if os.path.splitext(f)[1].lower() in valid_extensions:
-                full_path = os.path.join(directory, f)
-                image_files.append((directory, f, full_path))
-    
-    if not image_files:
-        print("No images found in labeled_illustrations or labeled_photos.")
-        return
-
-    print(f"Found {len(image_files)} images. Starting analysis...")
-    
-    results = []
-
-    # 5. Process images with a progress bar
-    for directory, img_file, full_path in tqdm(image_files, desc="Analyzing Sentiment"):
+    # 5. Process the images over the internet
+    for task in tqdm(images_to_process, desc="Analyzing Online Images"):
+        url = task["url"]
+        
         try:
-            # Open image and ensure it has 3 color channels (RGB)
-            image = Image.open(full_path).convert("RGB")
+            # Download the image into memory
+            response = requests.get(url, headers=HEADERS, timeout=10)
+            response.raise_for_status() # Check for 404 or connection errors
+            
+            # Open it with PIL directly from RAM
+            image = Image.open(BytesIO(response.content)).convert("RGB")
 
-            # Prepare inputs
+            # Run CLIP
             inputs = processor(
                 text=text_prompts, 
                 images=image, 
@@ -67,58 +95,43 @@ def main():
                 padding=True
             ).to(device)
 
-            # Run through the model (no_grad saves memory/speeds things up)
             with torch.no_grad():
                 outputs = model(**inputs)
             
-            # Get image-text similarity scores and convert to percentages (softmax)
             logits_per_image = outputs.logits_per_image
             probs = logits_per_image.softmax(dim=1).cpu().numpy()[0]
-            
-            # Find the highest scoring category
             best_idx = probs.argmax()
-            
-            # Sentiment score for sorting: positive_prob - negative_prob
-            # Range: -1.0 (most negative) to +1.0 (most positive)
             sentiment_score = float(probs[0]) - float(probs[1])
             
-            results.append({
-                "filename": img_file,
-                "directory": directory,
-                "path": full_path,
-                "sentiment": categories[best_idx],
-                "confidence_score": float(probs[best_idx]),
-                "sentiment_score": round(sentiment_score, 6),
-                "all_scores": {
-                    categories[i]: round(float(probs[i]), 4) for i in range(len(categories))
-                }
-            })
+            # Inject directly into our master dataset dictionary!
+            target_img_dict = dataset[task["article_idx"]]["Images"][task["img_idx"]]
+            target_img_dict["sentiment"] = categories[best_idx]
+            target_img_dict["confidence_score"] = float(probs[best_idx])
+            target_img_dict["sentiment_score"] = round(sentiment_score, 6)
+            target_img_dict["all_scores"] = {
+                categories[i]: round(float(probs[i]), 4) for i in range(len(categories))
+            }
+            
+            success_count += 1
 
         except Exception as e:
-            # Catch corrupted images so the script doesn't stop halfway through
-            results.append({
-                "filename": img_file,
-                "directory": directory,
-                "path": full_path,
-                "error": str(e)
-            })
+            # If the link is broken or the image is corrupted, just note the error and move on
+            target_img_dict = dataset[task["article_idx"]]["Images"][task["img_idx"]]
+            target_img_dict["sentiment_error"] = str(e)
+            fail_count += 1
 
-    # 6. Sort results: most positive on top, most negative last
-    # Errors sink to the bottom since they have no sentiment_score
-    def sort_key(item):
-        if "error" in item:
-            return float('-inf')  # forces errors to the end when reverse=True
-        return item.get("sentiment_score", 0)
-    
-    results.sort(key=sort_key, reverse=True)
-
-    # 7. Save results to JSON
-    output_file = "image_sentiment_results.json"
-    with open(output_file, "w", encoding="utf-8") as f:
-        json.dump(results, f, indent=4, ensure_ascii=False)
+    # 6. Save the completed dataset!
+    with open(output_json_file, "w", encoding="utf-8") as f:
+        json.dump(dataset, f, indent=2, ensure_ascii=False)
         
-    print(f"\nDone! Results saved to {output_file}")
-    print(f"Total processed: {len(results)}")
+    print("\n" + "="*40)
+    print("             RESULTS REPORT")
+    print("="*40)
+    print(f"Successfully downloaded and scored: {success_count}")
+    print(f"Failed (Broken URLs or connection): {fail_count}")
+    print("-" * 40)
+    print(f"Fully updated dataset saved to '{output_json_file}'")
+    print("You DO NOT need to run the merge script!")
 
 if __name__ == "__main__":
     main()
