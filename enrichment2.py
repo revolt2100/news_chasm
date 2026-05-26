@@ -34,7 +34,7 @@ from openai import OpenAI
 # =============================================================================
 # CONFIGURATION
 # =============================================================================
-os.environ['POLZA_AI_API_KEY'] = "pza_83xEnS3SrxTgGyzympRE63L0ss-h26Gc"
+os.environ['POLZA_AI_API_KEY'] = "API"
 INPUT_FILE = "final_holod_sentiment3.json"
 OUTPUT_FILE = "AGAINholod_enriched3.json"
 

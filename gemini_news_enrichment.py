@@ -41,7 +41,7 @@ from openai import OpenAI
 # =============================================================================
 # CONFIGURATION
 # =============================================================================
-os.environ['POLZA_AI_API_KEY'] = "pza_83xEnS3SrxTgGyzympRE63L0ss-h26Gc"
+os.environ['POLZA_AI_API_KEY'] = "API"
 INPUT_FILE = "filtered_text_holod_final.json"
 OUTPUT_FILE = "filtered_text_holod_final_enriched.json"
 
