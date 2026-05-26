@@ -34,7 +34,7 @@ from openai import OpenAI
 # =============================================================================
 # CONFIGURATION
 # =============================================================================
-os.environ['POLZA_AI_API_KEY'] = "pza_eZgZibc6uOM9FDuGbJjfnlHH00QJ6Du_"
+os.environ['POLZA_AI_API_KEY'] = "API"
 INPUT_FILE = "final.json"
 OUTPUT_FILE = "final2.json"
 
