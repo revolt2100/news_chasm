@@ -33,15 +33,16 @@ Y = np.array(y_data)
 model = LinearRegression()
 model.fit(X, Y)
 
-# Get the equation of the line: y = slope * x + intercept
+# Get the equation of the line and R-squared
 slope = model.coef_[0]
 intercept = model.intercept_
+r_squared = model.score(X, Y)  # <--- NEW: Calculate R²
 
 print(f"Regression Line calculated: Y = {slope:.4f} * X + {intercept:.4f}")
+print(f"R-squared (R²): {r_squared:.4f}") # <--- NEW: Print to terminal
 
 # 4. Define our threshold for "Equal"
 # This is the vertical distance from the line. 0.03 is a good starting point.
-# You can increase it (e.g., 0.05) if you want MORE articles to be considered "equal"
 threshold = 0.03 
 
 # 5. Classify every article and save to JSON
@@ -84,16 +85,20 @@ plt.scatter(X, Y, color='blue', s=20, label='Articles')
 line_x = np.linspace(min(X), max(X), 100).reshape(-1, 1)
 line_y = model.predict(line_x)
 
-# Plot the regression line
-plt.plot(line_x, line_y, color='red', linewidth=2, label='Regression Line')
+# Plot the regression line WITH R-Squared in the legend
+plt.plot(line_x, line_y, color='red', linewidth=2, 
+         label=f'Trend (Slope: {slope:.2f}, $R^2$: {r_squared:.3f})')
 
 # Plot the "Equal" threshold bands (dashed lines)
 plt.plot(line_x, line_y + threshold, color='gray', linestyle='--', label='+/- Threshold (Equal band)')
 plt.plot(line_x, line_y - threshold, color='gray', linestyle='--')
 
-plt.title('Text vs Image Status Classification')
+plt.title('Text vs Image Status Classification', fontsize=14, fontweight='bold')
 plt.xlabel('article_images_overall_score')
 plt.ylabel('text_overall_score')
-plt.legend()
+
+# Move the legend slightly if it blocks the data points
+plt.legend(loc='lower right') 
 plt.grid(True, alpha=0.3)
+plt.tight_layout()
 plt.show()

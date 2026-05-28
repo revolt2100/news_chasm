@@ -95,7 +95,10 @@ def draw_hex_plot(ax, x_data, y_data, title, y_label):
 
     model = LinearRegression()
     model.fit(X, Y)
+    
+    # --- NEW: CALCULATE R-SQUARED ---
     slope = model.coef_[0]
+    r_squared = model.score(X, Y)
 
     hb = ax.hexbin(
         X.flatten(), Y, 
@@ -106,7 +109,10 @@ def draw_hex_plot(ax, x_data, y_data, title, y_label):
     line_x = np.linspace(-1.1, 1.1, 100).reshape(-1, 1)
     line_y = model.predict(line_x)
 
-    ax.plot(line_x, line_y, color='orange', linewidth=2, label=f'Trend (Slope: {slope:.2f})')
+    # --- NEW: ADD R² TO THE LEGEND LABEL ---
+    ax.plot(line_x, line_y, color='orange', linewidth=2, 
+            label=f'Trend (Slope: {slope:.2f}, $R^2$: {r_squared:.3f})')
+            
     ax.plot(line_x, line_y + threshold, color='gray', linestyle='--', alpha=0.7)
     ax.plot(line_x, line_y - threshold, color='gray', linestyle='--', alpha=0.7)
 
@@ -117,14 +123,16 @@ def draw_hex_plot(ax, x_data, y_data, title, y_label):
     ax.axvline(0, color='black', linewidth=0.5, alpha=0.5) 
     ax.set_xlim(-1.1, 1.1)
     ax.set_ylim(-1.1, 1.1)
-    ax.legend(loc='lower right', fontsize=8)
+    
+    # Adjusted legend size slightly to fit the new text
+    ax.legend(loc='lower right', fontsize=9)
     
     return hb
 
 # ==========================================
 # 4. CREATE THE FIGURE (2 Rows, 3 Columns)
 # ==========================================
-fig, axes = plt.subplots(2, 3, figsize=(18, 12)) # Made it taller to fit 2 rows
+fig, axes = plt.subplots(2, 3, figsize=(18, 12)) 
 
 # --- Top Row ---
 hb_all = draw_hex_plot(axes[0, 0], x_article_avg, y_article_avg, "Article-Level: All Images", "Average Image Sentiment")
